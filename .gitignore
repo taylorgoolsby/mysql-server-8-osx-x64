@@ -6,3 +6,4 @@ server/data/mysql/ib_logfile1
 server/my.cnf
 yarn.lock
 .idea
+.DS_Store
