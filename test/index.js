@@ -20,7 +20,7 @@ exports.serverStartsAndStops = function(test) {
     DEBUG && console.log('stderr: ', data.toString());
 
     var ready =
-      !!data.toString().match(/Server socket created on IP: '::'/);
+      !!data.toString().match(/MySQL Community Server/);
 
     if(ready) {
       test.equal(ready, true);
