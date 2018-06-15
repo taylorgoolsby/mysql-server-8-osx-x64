@@ -49,8 +49,11 @@ module.exports = function(config, opts) {
   // crude method of ensuring there is no mysqld process already running
   exec('killall -KILL mysqld')
 
+  const initialized = fs.existsSync(path.resolve(__dirname, 'server/data/mysql/mysql'))
+
   // Did not work spawning mysqld directly from node, therefore shell script
-  var child = spawn(path.join(__dirname, reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
+  var child = spawn(path.join(__dirname,
+    !initialized || reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
 
   child.stop = function() {
     exec('killall mysqld')
