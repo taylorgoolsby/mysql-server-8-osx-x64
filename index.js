@@ -46,7 +46,9 @@ module.exports = function(config, opts) {
 
   fs.writeFileSync(path.join(__dirname, 'server/my.cnf'), myCnf);
 
-  console.log('reinitialize', reinitialize)
+  // crude method of ensuring there is no mysqld process already running
+  exec('killall mysqld')
+
   // Did not work spawning mysqld directly from node, therefore shell script
   var child = spawn(path.join(__dirname, reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
 
