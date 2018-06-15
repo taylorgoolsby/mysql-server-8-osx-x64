@@ -1,8 +1,8 @@
 {
-  "name": "mysql-server-5.6-osx-x64",
-  "version": "5.6.24002",
-  "description": "MySQL Server 5.6 for Mac OSX x86 64-bit",
-  "author": "Ben Green <ben@latenightsketches.com> (https://numtel.github.io)",
+  "name": "mysql-server-5.7-osx-x64",
+  "version": "5.7.22",
+  "description": "MySQL Server 5.7 for Mac OSX x86 64-bit",
+  "author": "Taylor Goolsby (https://github.com/taylorgoolsby)",
   "license": "GPLv2",
   "os": [
     "darwin"
@@ -16,9 +16,9 @@
     "binary",
     "log"
   ],
-  "repository": "https://github.com/numtel/mysql-server-5.6-osx-x64.git",
+  "repository": "https://github.com/taylorgoolsby/mysql-server-5.7-osx-x64",
   "scripts": {
-    "test": "PORT=3358 nodeunit test/index.js"
+    "test": "PORT=3306 nodeunit test/index.js"
   },
   "main": "index.js",
   "directories": {

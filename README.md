@@ -1,9 +1,13 @@
-# MySQL Server 5.6 for Mac OSX x86 64-bit
+# MySQL Server 5.7 for Mac OSX x86 64-bit
+
+This is a fork of [mysql-server-5.6-osx-x64](https://github.com/numtel/mysql-server-5.6-osx-x64).
+
+___
 
 Install and run [MySQL server](http://www.mysql.com) under the current user inside of the application directory.
 
 ```
-npm install mysql-server-5.6-osx-x64
+npm install mysql-server-5.7-osx-x64
 ```
 
 Provides function for spawning MySQL server instance with optional configuration settings. Returns [`ChildProcess`](https://nodejs.org/api/child_process.html#child_process_class_childprocess).
@@ -14,7 +18,7 @@ Provides function for spawning MySQL server instance with optional configuration
 ```javascript
 var startMysql = require('mysql-server-5.6-osx-x64');
 
-var mysqld = startMysql({ port: 3307 });
+var mysqld = startMysql({ port: 3307 }, {reinitialize: false});
 
 mysqld.stdout.on('data', function (data) {
   console.log('stdout: ' + data);
