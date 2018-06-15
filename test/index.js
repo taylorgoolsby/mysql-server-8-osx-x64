@@ -1,7 +1,7 @@
 if(!('PORT' in process.env) || process.env.PORT.match(/^\d+$/) === null)
   throw new Error('PORT_ENV_VAR_REQUIRED')
 
-var DEBUG = false;
+var DEBUG = true;
 
 var port = parseInt(process.env.PORT, 10);
 
@@ -20,15 +20,15 @@ exports.serverStartsAndStops = function(test) {
     DEBUG && console.log('stderr: ', data.toString());
 
     var ready =
-      data.toString().match(/port\: (\d+)\s+MySQL Community Server \(GPL\)/);
+      !!data.toString().match(/Server socket created on IP: '::'/);
 
-    if(ready !== null) {
-      test.equal(port, parseInt(ready[1], 10));
+    if(ready) {
+      test.equal(ready, true);
       mysqld.stop();
     }
   });
 
-  mysqld.on('close', function (code) {
+  mysqld.on('exit', function (code) {
     test.equal(code, 0);
     test.done();
   });

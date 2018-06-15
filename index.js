@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
 var extend = require('extend');
 
@@ -17,11 +18,10 @@ var defaultConfig = {
   basedir                 : './',
   datadir                 : './data/mysql',
   socket                  : './mysql.sock',
-  pid_file                : './mysql.pid',
   // Other settings
   innodb_buffer_pool_size : '128M',
   expire_logs_days        : '10',
-  sql_mode                : 'NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES',
+  sql_mode                : 'NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER',
 }
 
 // Start the MySQL server, optionally specifying options for my.cnf
@@ -42,13 +42,9 @@ module.exports = function(config) {
 
   // Did not work spawning mysqld directly from node, therefore shell script
   var child = spawn(path.join(__dirname, 'server/start.sh'));
-  
-  // Server pid is different than the spawned child pid becuase of shell script
-  // Provide extra method on child process to stop the server
+
   child.stop = function() {
-    var pidFile = path.join(__dirname, 'server', fullConfig.pid_file);
-    var pid = parseInt(fs.readFileSync(pidFile), 10);
-    process.kill(pid);
+    exec('killall mysqld')
   };
 
   return child
