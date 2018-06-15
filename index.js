@@ -25,7 +25,13 @@ var defaultConfig = {
 }
 
 // Start the MySQL server, optionally specifying options for my.cnf
-module.exports = function(config) {
+module.exports = function(config, opts) {
+  opts = opts || {}
+  const {
+    // reinitialize the database upon startup
+    reinitialize
+  } = opts
+
   var fullConfig = extend(defaultConfig, config || {});
 
   // Generate my.cnf from provided configuration
@@ -40,8 +46,9 @@ module.exports = function(config) {
 
   fs.writeFileSync(path.join(__dirname, 'server/my.cnf'), myCnf);
 
+  console.log('reinitialize', reinitialize)
   // Did not work spawning mysqld directly from node, therefore shell script
-  var child = spawn(path.join(__dirname, 'server/start.sh'));
+  var child = spawn(path.join(__dirname, reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
 
   child.stop = function() {
     exec('killall mysqld')

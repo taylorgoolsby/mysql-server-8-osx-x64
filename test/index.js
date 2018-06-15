@@ -10,7 +10,7 @@ var startServer = require('../');
 exports.serverStartsAndStops = function(test) {
   test.expect(2);
 
-  var mysqld = startServer({ port: port });
+  var mysqld = startServer({ port: port }, {reinitialize: false});
 
   DEBUG && mysqld.stdout.on('data', function (data) {
     console.log('stdout: ', data.toString());
