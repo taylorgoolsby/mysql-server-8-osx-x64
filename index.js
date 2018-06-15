@@ -9,7 +9,7 @@ var defaultConfig = {
   // Binary log settings
   server_id               : 1,
   binlog_format           : 'row',
-  log_bin                 : path.resolve(__dirname, 'server/binlog/mysql-bin.log'),
+  log_bin                 : '../../binlog/mysql-bin.log', // relative to datadir
   binlog_checksum         : 'CRC32',
   expire_logs_days        : 10,
   max_binlog_size         : '100M',
@@ -47,7 +47,7 @@ module.exports = function(config, opts) {
   fs.writeFileSync(path.join(__dirname, 'server/my.cnf'), myCnf);
 
   // crude method of ensuring there is no mysqld process already running
-  exec('killall mysqld')
+  exec('killall -KILL mysqld')
 
   // Did not work spawning mysqld directly from node, therefore shell script
   var child = spawn(path.join(__dirname, reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));

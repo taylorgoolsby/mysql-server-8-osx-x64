@@ -24,10 +24,7 @@ exports.serverStartsAndStops = function(test) {
 
     if(ready) {
       test.equal(ready, true);
-      setTimeout(() => {
-        mysqld.stop();
-      }, 5000)
-
+      mysqld.stop();
     }
   });
 
