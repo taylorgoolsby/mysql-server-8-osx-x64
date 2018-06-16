@@ -17,7 +17,6 @@ var defaultConfig = {
   // tmpdir set in server/start.sh
   basedir                 : './',
   datadir                 : path.resolve(__dirname, 'server/data/mysql'),
-  socket                  : path.resolve(__dirname, 'server/mysql.sock'),
   // Other settings
   innodb_buffer_pool_size : '128M',
   expire_logs_days        : '10',
