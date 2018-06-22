@@ -18,9 +18,13 @@
   ],
   "repository": "https://github.com/taylorgoolsby/mysql-server-5.7-osx-x64",
   "scripts": {
-    "test": "PORT=3306 nodeunit test/index.js"
+    "test": "PORT=3306 nodeunit test/index.js",
+    "mysql-server": "mysql-server-5.7-osx-x64"
   },
   "main": "index.js",
+  "bin": {
+    "mysql-server-5.7-osx-x64": "run.js"
+  },
   "directories": {
     "test": "test"
   },

@@ -55,7 +55,7 @@ module.exports = function(config, opts) {
     !initialized || reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
 
   child.stop = function() {
-    exec('killall mysqld')
+    exec('killall -KILL mysqld')
   };
 
   return child
