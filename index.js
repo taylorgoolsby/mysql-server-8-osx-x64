@@ -11,6 +11,7 @@ const connection = mysql.createConnection({
 });
 
 var defaultConfig = {
+  default_time_zone: '+00:00',
   port                    : 3306,
   // Binary log settings
   server_id               : 1,
