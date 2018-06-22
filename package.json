@@ -11,6 +11,7 @@
     "x64"
   ],
   "keywords": [
+    "local",
     "mysql",
     "server",
     "binary",
@@ -18,20 +19,15 @@
   ],
   "repository": "https://github.com/taylorgoolsby/mysql-server-5.7-osx-x64",
   "scripts": {
-    "test": "PORT=3306 nodeunit test/index.js",
+    "test": "jest",
     "mysql-server": "mysql-server-5.7-osx-x64"
   },
   "main": "index.js",
   "bin": {
     "mysql-server-5.7-osx-x64": "run.js"
   },
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {
-    "extend": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "nodeunit": "^0.9.1"
+    "jest": "^23.1.0"
   }
 }

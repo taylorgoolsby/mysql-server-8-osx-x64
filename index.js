@@ -2,7 +2,6 @@ var fs = require('fs');
 var path = require('path');
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
-var extend = require('extend');
 
 var defaultConfig = {
   port                    : 3306,
@@ -31,7 +30,7 @@ module.exports = function(config, opts) {
     reinitialize
   } = opts
 
-  var fullConfig = extend(defaultConfig, config || {});
+  var fullConfig = {...defaultConfig, ...config}
 
   // Generate my.cnf from provided configuration
   var myCnf = '[mysqld]\n' +
