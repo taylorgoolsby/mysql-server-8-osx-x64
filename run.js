@@ -9,6 +9,6 @@ mysqld.stderr.pipe(process.stderr)
 process.on('SIGINT', () => {
   mysqld.stop()
   mysqld.on('exit', function (code) {
-    process.exit(0)
+    process.exit(code)
   });
 })

@@ -21,7 +21,7 @@ test('serverStartsAndStops', async () => {
 
   return new Promise(resolve => {
     mysqld.on('exit', function (code) {
-      expect(code).toBe(137)
+      expect(code).toBe(0)
       resolve()
     });
   })

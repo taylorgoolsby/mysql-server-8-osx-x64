@@ -26,7 +26,9 @@
   "bin": {
     "mysql-server-5.7-osx-x64": "run.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mysql": "^2.15.0"
+  },
   "devDependencies": {
     "jest": "^23.1.0"
   }

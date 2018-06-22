@@ -2,6 +2,13 @@ var fs = require('fs');
 var path = require('path');
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
+const mysql = require('mysql')
+
+const connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : ''
+});
 
 var defaultConfig = {
   port                    : 3306,
@@ -50,11 +57,19 @@ module.exports = function(config, opts) {
   const initialized = fs.existsSync(path.resolve(__dirname, 'server/data/mysql/mysql'))
 
   // Did not work spawning mysqld directly from node, therefore shell script
-  var child = spawn(path.join(__dirname,
+  const child = spawn(path.join(__dirname,
     !initialized || reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
 
   child.stop = function() {
-    exec('killall -KILL mysqld')
+    connection.on('error', err => {
+      if (!err.toString().includes('The server closed the connection.')) {
+        exec('killall -KILL mysqld')
+        throw new Error('mysql server was not able to shutdown properly. Forcing shutdown may cause database to be unsaved.')
+      } else {
+        console.log('mysql server successfully shutdown.')
+      }
+    })
+    connection.query('SHUTDOWN;')
   };
 
   return child
