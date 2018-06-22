@@ -62,12 +62,7 @@ module.exports = function(config, opts) {
 
   child.stop = function() {
     connection.on('error', err => {
-      if (!err.toString().includes('The server closed the connection.')) {
-        exec('killall -KILL mysqld')
-        throw new Error('mysql server was not able to shutdown properly. Forcing shutdown may cause database to be unsaved.')
-      } else {
-        console.log('mysql server successfully shutdown.')
-      }
+      // eat error
     })
     connection.query('SHUTDOWN;')
   };
