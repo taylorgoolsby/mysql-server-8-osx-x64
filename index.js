@@ -115,8 +115,8 @@ module.exports = function() {
 
       if (badPreviousShutdown) {
         promiseDone = false
-        exec('killall -KILL mysqld')
-        return reject(new Error('mysql-server did not shut down correctly last time. Should be fixed now. Run your script again.'))
+        console.log('Previously mysql-server did not shutdown correctly. The current mysql-server is reusing this instance.')
+        return resolve()
       }
 
       if (!promiseDone && ready) {
