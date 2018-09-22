@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const mysql = require('mysql')
 const cosmiconfig = require('cosmiconfig')
@@ -104,6 +103,7 @@ module.exports = function() {
           // eat error
         })
         connection.query('SHUTDOWN;', () => {
+          console.log('mysql-server shutdown.')
           resolve()
         })
       } else {
