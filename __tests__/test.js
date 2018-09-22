@@ -1,12 +1,9 @@
-var DEBUG = process.env.DEBUG || false;
+jest.setTimeout(15000)
 
-var port = parseInt(process.env.PORT || 3306, 10);
-
-var startServer = require('../');
+const startServer = require('../');
 
 test('serverStartsAndStops', async () => {
-  const mysqld = startServer({ port: port }, {reinitialize: false});
-  DEBUG && mysqld.stderr.pipe(process.stdout)
+  const mysqld = startServer();
 
   await mysqld.ready
   mysqld.stop();
