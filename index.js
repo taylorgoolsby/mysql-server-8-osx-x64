@@ -113,8 +113,8 @@ module.exports = function() {
       const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/)
       const badPreviousShutdown = !!data.toString().match(/Check that you do not already have another mysqld process using the same InnoDB data or log files./)
 
-      if (badPreviousShutdown) {
-        promiseDone = false
+      if (!promiseDone && badPreviousShutdown) {
+        promiseDone = true
         console.log('Previously mysql-server did not shutdown correctly. The current mysql-server is reusing this instance.')
         return resolve()
       }
