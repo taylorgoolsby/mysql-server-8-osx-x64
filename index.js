@@ -31,6 +31,13 @@ var defaultConfig = {
 }
 
 // Start the MySQL server, optionally specifying options for my.cnf
+/*
+Returns the child thread.
+Use child.stop() to stop server.
+child.ready is a Promise.
+child.ready resolves when the server is fully loaded.
+child.ready rejects when the port is blocked.
+*/
 module.exports = function(config, opts) {
   opts = opts || {}
   const {
@@ -53,7 +60,7 @@ module.exports = function(config, opts) {
   fs.writeFileSync(path.join(__dirname, 'server/my.cnf'), myCnf);
 
   // crude method of ensuring there is no mysqld process already running
-  exec('killall -KILL mysqld')
+  // exec('killall -KILL mysqld')
 
   const initialized = fs.existsSync(path.resolve(__dirname, 'server/data/mysql/mysql'))
 
@@ -67,6 +74,23 @@ module.exports = function(config, opts) {
     })
     connection.query('SHUTDOWN;')
   };
+
+  child.ready = new Promise((resolve, reject) => {
+    let promiseDone = false
+    child.stderr.on('data', function(data) {
+      const ready =
+        !!data.toString().match(/MySQL Community Server/);
+      const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/)
+      if (!promiseDone && ready) {
+        promiseDone = true
+        return resolve()
+      }
+      if (!promiseDone && blockedPort) {
+        promiseDone = true
+        return reject(new Error(`Port ${fullConfig.port} is blocked. New MySQL server not started.`))
+      }
+    })
+  })
 
   return child
 }
