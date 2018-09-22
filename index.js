@@ -95,14 +95,21 @@ module.exports = function() {
     mysqld.stderr.pipe(process.stdout)
   }
 
-  let doNotStop = false
+  let doNotShutdown = false
 
   mysqld.stop = function() {
-    if (doNotStop) return
-    connection.on('error', err => {
-      // eat error
+    return new Promise((resolve) => {
+      if (!doNotShutdown) {
+        connection.on('error', err => {
+          // eat error
+        })
+        connection.query('SHUTDOWN;', () => {
+          resolve()
+        })
+      } else {
+        resolve()
+      }
     })
-    connection.query('SHUTDOWN;')
   };
 
   mysqld.ready = new Promise((resolve, reject) => {
@@ -115,7 +122,8 @@ module.exports = function() {
 
       if (!promiseDone && badPreviousShutdown) {
         promiseDone = true
-        console.log('Previously mysql-server did not shutdown correctly. The current mysql-server is reusing this instance.')
+        doNotShutdown = true
+        console.log('A previous instance of mysql-server is still running. The current mysql-server is reusing this instance.')
         return resolve()
       }
 
@@ -127,8 +135,8 @@ module.exports = function() {
       if (!promiseDone && blockedPort) {
         promiseDone = true
         if (allowBlockedPort) {
-          doNotStop = true
-          console.log(`mysql-server is not running. Port ${port} is in use by a different program. But allowBlockedPort=true.`)
+          doNotShutdown = true
+          console.log(`mysql-server is not running. Port ${port} is in use by a different program. But allowBlockedPort=true. This external instance is being used.`)
           return resolve()
         } else {
           return reject(new Error(`Port ${fullConfig.port} is blocked. New MySQL server not started.`))
