@@ -123,6 +123,7 @@ module.exports = function() {
       if (!promiseDone && badPreviousShutdown) {
         promiseDone = true
         doNotShutdown = true
+        mysqld.kill()
         console.log('A previous instance of mysql-server is still running. The current mysql-server is reusing this instance.')
         return resolve()
       }
@@ -137,6 +138,7 @@ module.exports = function() {
         if (allowBlockedPort) {
           doNotShutdown = true
           console.log(`mysql-server is not running. Port ${port} is in use by a different program. But allowBlockedPort=true. This external instance is being used.`)
+          mysqld.kill()
           return resolve()
         } else {
           return reject(new Error(`Port ${fullConfig.port} is blocked. New MySQL server not started.`))
