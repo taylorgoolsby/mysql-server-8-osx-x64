@@ -1,6 +1,6 @@
 {
   "name": "mysql-server-5.7-osx-x64",
-  "version": "100.0.7",
+  "version": "100.0.8",
   "description": "MySQL Server 5.7 for Mac OSX x86 64-bit",
   "author": "Taylor Goolsby (https://github.com/taylorgoolsby)",
   "license": "GPLv3",
