@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawn;
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const cosmiconfig = require('cosmiconfig')
 
 const explorer = cosmiconfig("mysql-server")
@@ -17,13 +17,6 @@ const configrc = {
   ...defaultConfigrc,
   ...rcResults
 }
-
-const connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  port: configrc.port
-});
 
 const defaultConfig = {
   default_time_zone: '+00:00',
@@ -42,7 +35,7 @@ const defaultConfig = {
   // Other settings
   innodb_buffer_pool_size : '128M',
   expire_logs_days        : '10',
-  sql_mode                : 'NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER',
+  sql_mode                : 'NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO',
 }
 
 /*
@@ -97,12 +90,23 @@ module.exports = function() {
   let doNotShutdown = false
 
   mysqld.stop = function() {
+    const connection = mysql.createConnection({
+      host     : 'localhost',
+      user     : 'root',
+      password : '',
+      port: configrc.port
+    });
+
     return new Promise((resolve) => {
       if (!doNotShutdown) {
         connection.on('error', err => {
           // eat error
         })
-        connection.query('SHUTDOWN;', () => {
+        connection.query('SHUTDOWN;', (err, results, fields) => {
+          if (err) {
+            console.log('err', err)
+          }
+          console.log('results', results)
           console.log('mysql-server shutdown.')
           resolve()
         })

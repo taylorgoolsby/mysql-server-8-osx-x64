@@ -1,4 +1,4 @@
-# MySQL Server 5.7 for Mac OSX x86 64-bit
+# MySQL Server 8 for Mac OSX x86 64-bit
 
 This is a fork of [mysql-server-5.6-osx-x64](https://github.com/numtel/mysql-server-5.6-osx-x64).
 
