@@ -101,6 +101,11 @@ module.exports = function() {
   let doNotShutdown = false
 
   mysqld.stop = function() {
+    if (!alreadyRunning) {
+      console.log('MySQL server is not running. Already stopped.')
+      return
+    }
+
     const connection = mysql.createConnection({
       host     : 'localhost',
       user     : 'root',
