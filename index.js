@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawn;
-const mysql = require('mysql2')
+const mysql = require('mysql')
 const cosmiconfig = require('cosmiconfig')
 
 const explorer = cosmiconfig("mysql-server")
@@ -106,7 +106,6 @@ module.exports = function() {
           if (err) {
             console.log('err', err)
           }
-          console.log('results', results)
           console.log('mysql-server shutdown.')
           resolve()
         })
@@ -135,7 +134,27 @@ module.exports = function() {
       if (!promiseDone && ready) {
         promiseDone = true
         console.log(`mysql-server running on port ${port}.`)
-        return resolve()
+
+        // https://stackoverflow.com/a/56509065:
+        const connection = mysql.createConnection({
+          host     : 'localhost',
+          user     : 'root',
+          password : '',
+          port: configrc.port
+        });
+        connection.on('error', err => {
+          // eat error
+        })
+        connection.query(`ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';`, (err, results, fields) => {
+          if (err) {
+            console.log('err', err)
+          }
+          console.log('Do not use this in production: Downgraded "MySQL" to authenticate using "mysql_native_password".')
+          return resolve()
+        })
+
+        return
+        // return resolve()
       }
       if (!promiseDone && blockedPort) {
         promiseDone = true
