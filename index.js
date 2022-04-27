@@ -137,7 +137,7 @@ module.exports = function() {
       console.log('[mysql]', data.toString())
       const ready =
         !!data.toString().match(/MySQL Community Server/);
-      const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/)
+      const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/) || !!data.toString().match(/Unable to lock/)
       const badPreviousShutdown = !!data.toString().match(/Check that you do not already have another mysqld process using the same InnoDB data or log files./)
 
       if (!promiseDone && badPreviousShutdown) {
