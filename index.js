@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawn;
 const mysql = require('mysql2')
-const fkill = require('fkill')
 const cosmiconfig = require('cosmiconfig')
 
 const explorer = cosmiconfig("mysql-server")
@@ -35,7 +34,6 @@ const defaultConfig = {
   datadir                 : path.resolve(__dirname, 'server/data/mysql'),
   // Other settings
   innodb_buffer_pool_size : '128M',
-  expire_logs_days        : '10',
   sql_mode                : 'NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO',
   lower_case_table_names  : 2
 }
@@ -145,7 +143,7 @@ module.exports = function() {
       if (!promiseDone && badPreviousShutdown) {
         promiseDone = true
         doNotShutdown = true
-        fkill(mysqld.pid, {force: true})
+        kill(mysqld.pid, {force: true})
         console.log('A previous instance of mysql-server is still running. The current mysql-server is reusing this instance.')
         return resolve()
       }
@@ -180,7 +178,7 @@ module.exports = function() {
         if (allowBlockedPort) {
           doNotShutdown = true
           console.log(`mysql-server is not running. Port ${port} is in use by a different program. But allowBlockedPort=true. This external instance is being used.`)
-          fkill(mysqld.pid, {force: true})
+          kill(mysqld.pid, {force: true})
           return resolve()
         } else {
           return reject(new Error(`Port ${fullConfig.port} is blocked. New MySQL server not started.`))
@@ -190,4 +188,9 @@ module.exports = function() {
   })
 
   return mysqld
+}
+
+async function kill(...args) {
+  const fkill = await import('fkill')
+  fkill(...args)
 }
