@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "cosmiconfig": "^5.0.6",
+    "fkill": "^8.0.0",
     "mysql2": "^2.3.3"
   },
   "devDependencies": {

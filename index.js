@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawn;
 const mysql = require('mysql2')
+const fkill = require('fkill')
 const cosmiconfig = require('cosmiconfig')
 
 const explorer = cosmiconfig("mysql-server")
@@ -144,7 +145,7 @@ module.exports = function() {
       if (!promiseDone && badPreviousShutdown) {
         promiseDone = true
         doNotShutdown = true
-        process.kill(-mysqld.pid)
+        fkill(mysqld.pid, {force: true})
         console.log('A previous instance of mysql-server is still running. The current mysql-server is reusing this instance.')
         return resolve()
       }
@@ -179,7 +180,7 @@ module.exports = function() {
         if (allowBlockedPort) {
           doNotShutdown = true
           console.log(`mysql-server is not running. Port ${port} is in use by a different program. But allowBlockedPort=true. This external instance is being used.`)
-          process.kill(-mysqld.pid)
+          fkill(mysqld.pid, {force: true})
           return resolve()
         } else {
           return reject(new Error(`Port ${fullConfig.port} is blocked. New MySQL server not started.`))
