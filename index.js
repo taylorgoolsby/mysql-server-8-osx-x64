@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawn;
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const cosmiconfig = require('cosmiconfig')
 
 const explorer = cosmiconfig("mysql-server")
