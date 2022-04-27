@@ -134,6 +134,7 @@ module.exports = function() {
   mysqld.ready = new Promise((resolve, reject) => {
     let promiseDone = false
     mysqld.stderr.on('data', function(data) {
+      console.log('[mysql]', data.toString())
       const ready =
         !!data.toString().match(/MySQL Community Server/);
       const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/)
