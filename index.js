@@ -38,6 +38,8 @@ const defaultConfig = {
   sql_mode                : 'NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO',
 }
 
+let alreadyRunning = false
+
 /*
 Returns the child thread running mysqld.
 I'm calling the return value "mysqld":
@@ -47,6 +49,11 @@ mysqld.ready resolves when the server is fully loaded.
 mysqld.ready rejects when the port is blocked unless allowBlockedPort=true.
 */
 module.exports = function() {
+  if (alreadyRunning) {
+    console.log('A previous instance of mysql-server is still running.')
+    return
+  }
+
   const {
     allowBlockedPort,
     mycnf,
@@ -79,8 +86,12 @@ module.exports = function() {
   const initialized = fs.existsSync(path.resolve(__dirname, 'server/data/mysql/mysql'))
 
   // Did not work spawning mysqld directly from node, therefore shell script
+  alreadyRunning = true
   const mysqld = spawn(path.join(__dirname,
     !initialized || reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'));
+  mysqld.on('exit', function (code) {
+    alreadyRunning = false
+  })
 
   if (verbose) {
     mysqld.stdout.pipe(process.stdout)
