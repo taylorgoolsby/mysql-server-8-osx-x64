@@ -1,6 +1,6 @@
 {
   "name": "mysql-server-8-osx-x64",
-  "version": "100.1.9",
+  "version": "100.1.10",
   "description": "MySQL Server 8 for Mac OSX x86 64-bit",
   "author": "Taylor Goolsby (https://github.com/taylorgoolsby)",
   "license": "GPLv3",
