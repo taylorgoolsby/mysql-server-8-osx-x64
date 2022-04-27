@@ -48,7 +48,7 @@ mysqld.ready is a Promise.
 mysqld.ready resolves when the server is fully loaded.
 mysqld.ready rejects when the port is blocked unless allowBlockedPort=true.
 */
-module.exports = function() {
+const startServer = function() {
   if (alreadyRunning) {
     console.log('A previous instance of mysql-server is still running.')
     return
@@ -89,7 +89,7 @@ module.exports = function() {
   alreadyRunning = true
   const mysqld = spawn(path.join(__dirname,
     !initialized || reinitialize ? 'server/reinitialize.sh' : 'server/start.sh'), {detached: true});
-  mysqld.on('exit', function (code) {
+  mysqld.on('close', function (code) {
     alreadyRunning = false
   })
 
@@ -100,35 +100,21 @@ module.exports = function() {
 
   let doNotShutdown = false
 
-  mysqld.stop = function() {
+  mysqld.stop = async function() {
     if (!alreadyRunning) {
       console.log('MySQL server is not running. Already stopped.')
       return
     }
 
-    const connection = mysql.createConnection({
-      host     : 'localhost',
-      user     : 'root',
-      password : '',
-      port: configrc.port
-    });
-
-    return new Promise((resolve) => {
-      if (!doNotShutdown) {
-        connection.on('error', err => {
-          // eat error
-        })
-        connection.query('SHUTDOWN;', (err, results, fields) => {
-          if (err) {
-            console.log('err', err)
-          }
-          console.log('mysql-server shutdown.')
-          resolve()
-        })
-      } else {
+    const p = new Promise(async (resolve) => {
+      mysqld.on('close', () => {
+        console.log('close')
         resolve()
-      }
+      })
+      kill(mysqld.pid)
     })
+
+    return p
   };
 
   mysqld.ready = new Promise((resolve, reject) => {
@@ -143,7 +129,7 @@ module.exports = function() {
       if (!promiseDone && badPreviousShutdown) {
         promiseDone = true
         doNotShutdown = true
-        kill(mysqld.pid, {force: true})
+        kill(mysqld.pid)
         console.log('A previous instance of mysql-server is still running. The current mysql-server is reusing this instance.')
         return resolve()
       }
@@ -178,7 +164,7 @@ module.exports = function() {
         if (allowBlockedPort) {
           doNotShutdown = true
           console.log(`mysql-server is not running. Port ${port} is in use by a different program. But allowBlockedPort=true. This external instance is being used.`)
-          kill(mysqld.pid, {force: true})
+          kill(mysqld.pid)
           return resolve()
         } else {
           return reject(new Error(`Port ${fullConfig.port} is blocked. New MySQL server not started.`))
@@ -190,7 +176,8 @@ module.exports = function() {
   return mysqld
 }
 
-async function kill(...args) {
-  const fkill = await import('fkill')
-  fkill(...args)
+function kill(pid) {
+  process.kill(-pid)
 }
+
+module.exports = startServer
