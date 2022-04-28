@@ -49,8 +49,7 @@ mysqld.ready resolves when the server is fully loaded.
 mysqld.ready rejects when the port is blocked unless allowBlockedPort=true.
 */
 const startServer = function() {
-  const locked = fs.existsSync(path.join(__dirname, 'server/data/mysql/ibdata1'))
-  if (alreadyRunning || locked) {
+  if (alreadyRunning) {
     console.log('A previous instance of mysql-server is still running.')
     return {
       ready: Promise.resolve(),
