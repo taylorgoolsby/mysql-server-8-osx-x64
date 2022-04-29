@@ -124,7 +124,7 @@ const startServer = function() {
   mysqld.ready = new Promise((resolve, reject) => {
     let promiseDone = false
     mysqld.stderr.on('data', function(data) {
-      console.log('[mysql]', data.toString())
+      // console.log('[mysql]', data.toString())
       const ready =
         !!data.toString().match(/MySQL Community Server/);
       const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/) || !!data.toString().match(/Unable to lock/)
@@ -183,7 +183,7 @@ const startServer = function() {
 }
 
 function kill() {
-  console.log('pid', pid)
+  console.log('killing pid', pid)
   if (!pid) {
     return
   }
