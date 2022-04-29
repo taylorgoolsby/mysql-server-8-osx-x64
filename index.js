@@ -39,6 +39,7 @@ const defaultConfig = {
 }
 
 let alreadyRunning = false
+let pid
 
 /*
 Returns the child thread running mysqld.
@@ -129,6 +130,8 @@ const startServer = function() {
       const blockedPort = !!data.toString().match(/Do you already have another mysqld server running on port:/) || !!data.toString().match(/Unable to lock/)
       const badPreviousShutdown = !!data.toString().match(/Check that you do not already have another mysqld process using the same InnoDB data or log files./)
 
+      pid = pid || data.toString().match(/starting as process (\d+)/)?.[1]
+
       if (!promiseDone && badPreviousShutdown) {
         promiseDone = true
         doNotShutdown = true
@@ -179,8 +182,12 @@ const startServer = function() {
   return mysqld
 }
 
-function kill(pid) {
-  process.kill(-pid)
+function kill() {
+  console.log('pid', pid)
+  if (!pid) {
+    return
+  }
+  process.kill(pid)
 }
 
 module.exports = startServer
